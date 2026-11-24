@@ -148,6 +148,7 @@ def construir():
         numero, _, texto = t.partition(". ")
         extra = panel if t.startswith("3.") else ""
         contenido = "\n".join(partes)
+        contenido = re.sub(r"<li><strong>([^<]*?):</strong>", r"<li><strong>\1</strong>", contenido)  # etiquetas sin dos puntos
         if extra:  # el panel de cifras va justo después del título de la demostración
             contenido = extra + contenido
         cuerpo.append(f'<section id="{i}" class="card"><header><span class="num">{html.escape(numero)}</span><h2>{html.escape(texto)}</h2></header>{contenido}</section>')
