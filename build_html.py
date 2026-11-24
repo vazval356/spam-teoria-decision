@@ -32,6 +32,10 @@ def render_md(texto):
 
     texto = re.sub(r"\$\$.+?\$\$", guardar, texto, flags=re.S)
     texto = re.sub(r"\$[^$\n]+?\$", guardar, texto)
+    # pegar "(" y ")" , . ; : a las fórmulas y no separar el % de su número (evita saltos de línea feos)
+    texto = re.sub(r"(\(?)(MATHPH\d+X)([).,;:]?)",
+                   lambda m: f'<span class="nb">{m.group(0)}</span>' if (m.group(1) or m.group(3)) else m.group(0), texto)
+    texto = re.sub(r"(?<=\d) %", lambda m: " %", texto)
     salida = md(texto)
     for i, formula in enumerate(mates):
         if formula.startswith("$$"):
@@ -205,7 +209,7 @@ a{color:var(--ink)}
 .num{display:block;font:500 15px 'JetBrains Mono',monospace;letter-spacing:.08em;color:var(--mut);margin-bottom:8px}
 .num::before{content:"0"}
 .card h2{margin:0;font-size:46px;line-height:1.2;letter-spacing:-.025em;font-weight:700;color:var(--ink)}
-.card p{margin:0 0 16px}
+.card p{margin:0 0 16px}.card p,.card li{text-wrap:pretty}.nb{white-space:nowrap}
 .card ul{padding:0;list-style:none;margin:16px 0}
 .card li{position:relative;padding-left:28px;margin:12px 0}
 .card li::before{content:"–";position:absolute;left:2px;color:var(--mut)}
@@ -262,7 +266,7 @@ pre.stream{background:transparent;border-left:2px solid var(--ink);padding:4px 0
 #s4 li::before{display:none}
 #s4 li strong:first-child{display:block;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px}
 
-footer{padding:48px 0 80px;text-align:left;color:var(--mut);font-size:16px;border-top:1px solid var(--line);margin-top:40px}
+footer{margin-top:40px;padding-bottom:80px;color:var(--mut);font-size:16px}footer div{border-top:1px solid var(--line);padding-top:36px}
 
 @media (max-width:860px){
   body{font-size:18px}.card h2{font-size:32px}.hero{padding-top:64px}.wrap{padding:0 22px}.nav b{display:none}.nav .wrap{gap:14px;justify-content:space-between}.nav a{font-size:14px}.k-val{font-size:34px}.kpis{grid-template-columns:1fr 1fr}
@@ -278,7 +282,7 @@ footer{padding:48px 0 80px;text-align:left;color:var(--mut);font-size:16px;borde
   <div class="hero">{{HERO}}</div>
   {{CUERPO}}
 </main>
-<footer>Aprendizaje Automático · datos: Spambase (UCI) · código y notebook en el repositorio</footer>
+<footer class="wrap"><div>Aprendizaje Automático · datos: Spambase (UCI) · código y notebook en el repositorio</div></footer>
 <script>
 const enlaces=[...document.querySelectorAll('.nav a')],secs=enlaces.map(a=>document.querySelector(a.getAttribute('href')));
 const prog=document.getElementById('prog');
